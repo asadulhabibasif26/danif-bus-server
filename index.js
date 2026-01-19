@@ -31,6 +31,7 @@ async function run() {
 
     const db = client.db("danif_db");
     const userCollection = db.collection("users");
+    const ticketsCollection = db.collection('tickets')
 
     app.post("/users", async (req, res) => {
       const newUser = req.body;
@@ -50,6 +51,23 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+
+    app.post('/tickets' , async (req , res) => {
+      const tickets = req.body;
+      const result = await ticketsCollection.insertOne(tickets);
+      res.send(result);
+    })
+
+    app.get('/tickets' , async (req , res) => {
+      const email = req.query.email;
+      const query = {};
+      if (email) {
+        query.email = email;
+      }
+      const cursor = ticketsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    })
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
